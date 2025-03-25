@@ -1,0 +1,33 @@
+# Core Python dependencies
+Flask==2.3.2
+flask-cors==4.0.0
+Werkzeug==2.3.4
+
+# Media Processing
+Pillow==9.5.0
+opencv-python-headless==4.7.0.72
+moviepy==1.0.3
+numpy==1.24.3
+SpeechRecognition==3.10.0
+pydub==0.25.1
+
+# API and Web Interactions
+requests==2.31.0
+
+# LLM Integrations
+google-generativeai==0.3.1
+anthropic==0.7.6
+openai==1.3.5
+langchain-community==0.0.16
+replicate==0.22.0
+huggingface_hub==0.19.4
+
+# Utilities
+typing-extensions==4.7.1
+
+# Optional but recommended
+python-dotenv==1.0.0
+
+# Deployment and Logging
+gunicorn==20.1.0
+logging==0.5.1.2

@@ -1,0 +1,8 @@
+{
+    "default_provider": "gemini",
+    "gemini": "AIzaSyApGTupfNI_VD92XztwndsjQhU6jEDFPMk" ,
+    "openai": "YOUR_OPENAI_API_KEY",
+    "anthropic": "YOUR_ANTHROPIC_API_KEY",
+    "replicate": "YOUR_REPLICATE_API_KEY",
+    "huggingface": "YOUR_HUGGINGFACE_API_KEY"
+}
