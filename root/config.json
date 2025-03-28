@@ -3,6 +3,6 @@
     "gemini": "YOUR_GEMINI_API_KEY" ,
     "openai": "YOUR_OPENAI_API_KEY",
     "anthropic": "YOUR_ANTHROPIC_API_KEY",
-    "replicate": "YOUR_REPLICATE_API_KEY",
+    "replicate": "YOUR_replicate_API_KEY",
     "huggingface": "YOUR_HUGGINGFACE_API_KEY"
 }

@@ -151,19 +151,71 @@ class MediaProcessor:
             return []
     
     @staticmethod
-    def transcribe_audio(audio_path: str) -> str:
-        """Transcribe audio to text using speech recognition"""
+    def transcribe_audio(audio_path: str, max_duration_minutes: int = 5) -> str:
+        """
+        Enhanced audio transcription with large file handling
+        
+        Args:
+            audio_path (str): Path to audio file
+            max_duration_minutes (int): Maximum audio duration to process
+        
+        Returns:
+            str: Transcribed text
+        """
         try:
+            # Validate audio file
+            if not os.path.exists(audio_path):
+                logger.error(f"Audio file does not exist: {audio_path}")
+                return ""
+            
+            # Log file details for debugging
+            logger.info(f"Transcribing audio file: {audio_path}")
+            file_size_mb = os.path.getsize(audio_path) / (1024 * 1024)
+            logger.info(f"File size: {file_size_mb:.2f} MB")
+
+            # Check file size and duration
+            audio = AudioSegment.from_file(audio_path)
+            duration_minutes = len(audio) / (1000 * 60)  # Convert milliseconds to minutes
+            
+            logger.info(f"Audio duration: {duration_minutes:.2f} minutes")
+            
+            # Trim audio if too long
+            if duration_minutes > max_duration_minutes:
+                logger.warning(f"Audio exceeds {max_duration_minutes} minutes. Trimming.")
+                audio = audio[:max_duration_minutes * 60 * 1000]  # Trim to max duration
+                trim_path = audio_path + "_trimmed.wav"
+                audio.export(trim_path, format="wav")
+                audio_path = trim_path
+
             # Initialize recognizer
             recognizer = sr.Recognizer()
             
-            # Load audio file
+            # Load audio file with noise adjustment
             with sr.AudioFile(audio_path) as source:
+                recognizer.adjust_for_ambient_noise(source, duration=1)
                 audio_data = recognizer.record(source)
             
-            # Transcribe audio
-            text = recognizer.recognize_google(audio_data)
-            return text
+            # Try multiple recognition methods with increased robustness
+            recognition_methods = [
+                ('Google', recognizer.recognize_google),
+                ('Sphinx', recognizer.recognize_sphinx),
+                ('Google Cloud', recognizer.recognize_google_cloud),
+                ('Wit.ai', recognizer.recognize_wit)
+            ]
+            
+            for method_name, recognition_func in recognition_methods:
+                try:
+                    logger.info(f"Attempting transcription with {method_name}")
+                    text = recognition_func(audio_data)
+                    logger.info(f"Successful transcription with {method_name}")
+                    return text
+                except Exception as e:
+                    logger.warning(f"{method_name} transcription failed: {e}")
+            
+            logger.error("All transcription methods failed")
+            return ""
+        
         except Exception as e:
-            logger.error(f"Failed to transcribe audio {audio_path}: {str(e)}")
+            logger.error(f"Comprehensive audio transcription error: {str(e)}")
+            logger.exception("Detailed audio transcription error:")
             return ""
